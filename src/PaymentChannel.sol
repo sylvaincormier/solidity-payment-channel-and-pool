@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
-import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import "openzeppelin-contracts/security/ReentrancyGuard.sol";
+import "openzeppelin-contracts/utils/cryptography/ECDSA.sol";
 
 contract PaymentChannel is ReentrancyGuard {
-    using MessageHashUtils for bytes32;
     using ECDSA for bytes32;
 
     address public payer;
@@ -35,8 +33,8 @@ contract PaymentChannel is ReentrancyGuard {
 
     function verify(uint256 amount, bytes memory signature) public view returns (bool) {
         bytes32 messageHash = getHash(amount);
-        bytes32 ethSignedMessageHash = messageHash.toEthSignedMessageHash();
-        return ethSignedMessageHash.recover(signature) == payer;
+        bytes32 ethSignedMessageHash = ECDSA.toEthSignedMessageHash(messageHash);
+        return ECDSA.recover(ethSignedMessageHash, signature) == payer;
     }
 
     function claim(uint256 amount, bytes memory signature) external nonReentrant {

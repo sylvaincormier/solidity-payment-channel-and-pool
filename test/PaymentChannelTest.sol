@@ -3,10 +3,10 @@ pragma solidity ^0.8.20;
 
 import {Test, console2} from "forge-std/Test.sol";
 import {PaymentChannel} from "../src/PaymentChannel.sol";
-import "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
+import "openzeppelin-contracts/utils/cryptography/ECDSA.sol";
 
 contract PaymentChannelTest is Test {
-    using MessageHashUtils for bytes32;
+    using ECDSA for bytes32;
     
     PaymentChannel public channel;
     address public payer;
@@ -16,7 +16,7 @@ contract PaymentChannelTest is Test {
     uint256 public duration;
 
     function setUp() public {
-        // Create deterministic addresses using private key 1
+        // Create deterministic addresses using private key
         payerPrivateKey = 0x1234; // Use a known private key
         payer = vm.addr(payerPrivateKey);
         payee = makeAddr("payee");
@@ -31,7 +31,7 @@ contract PaymentChannelTest is Test {
         channel = new PaymentChannel{value: initialDeposit}(payee, duration);
     }
 
-    function testChannelDeployment() public {
+    function testChannelDeployment() public view {
         assertEq(channel.payer(), payer);
         assertEq(channel.payee(), payee);
         assertEq(address(channel).balance, initialDeposit);
@@ -39,12 +39,13 @@ contract PaymentChannelTest is Test {
         assertTrue(channel.expiresAt() > block.timestamp);
     }
 
-    function testSignatureVerification() public {
+    function testSignatureVerification() public view {
         uint256 amount = 0.5 ether;
         
         // Create signature as payer
         bytes32 messageHash = channel.getHash(amount);
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(payerPrivateKey, messageHash.toEthSignedMessageHash());
+        bytes32 ethSignedMessageHash = ECDSA.toEthSignedMessageHash(messageHash);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(payerPrivateKey, ethSignedMessageHash);
         bytes memory signature = abi.encodePacked(r, s, v);
 
         // Verify signature
@@ -56,7 +57,8 @@ contract PaymentChannelTest is Test {
         
         // Create signature as payer
         bytes32 messageHash = channel.getHash(amount);
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(payerPrivateKey, messageHash.toEthSignedMessageHash());
+        bytes32 ethSignedMessageHash = ECDSA.toEthSignedMessageHash(messageHash);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(payerPrivateKey, ethSignedMessageHash);
         bytes memory signature = abi.encodePacked(r, s, v);
 
         // Record balances before claim
@@ -107,7 +109,8 @@ contract PaymentChannelTest is Test {
         
         // Create signature as payer
         bytes32 messageHash = channel.getHash(amount);
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(payerPrivateKey, messageHash.toEthSignedMessageHash());
+        bytes32 ethSignedMessageHash = ECDSA.toEthSignedMessageHash(messageHash);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(payerPrivateKey, ethSignedMessageHash);
         bytes memory signature = abi.encodePacked(r, s, v);
 
         // Fast forward past expiration
@@ -124,7 +127,8 @@ contract PaymentChannelTest is Test {
         
         // Create signature as payer
         bytes32 messageHash = channel.getHash(amount);
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(payerPrivateKey, messageHash.toEthSignedMessageHash());
+        bytes32 ethSignedMessageHash = ECDSA.toEthSignedMessageHash(messageHash);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(payerPrivateKey, ethSignedMessageHash);
         bytes memory signature = abi.encodePacked(r, s, v);
 
         // First claim
