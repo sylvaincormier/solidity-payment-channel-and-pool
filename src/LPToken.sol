@@ -2,21 +2,29 @@
 pragma solidity ^0.8.20;
 
 import "openzeppelin-contracts/token/ERC20/ERC20.sol";
+import "forge-std/console2.sol";
 
 contract LPToken is ERC20 {
     address public immutable pool;
 
-    constructor() ERC20("LP Token", "LP") {
+    constructor() ERC20("Liquidity Pool Token", "LPT") {
         pool = msg.sender;
+        console2.log("LP Token constructor - Pool address set to:", msg.sender);
     }
 
-    function mint(address to, uint256 amount) external {
+    function mint(address account, uint256 amount) external {
+        console2.log("LP Token mint called by:", msg.sender);
+        console2.log("Minting to address:", account);
+        console2.log("Amount:", amount);
+        
         require(msg.sender == pool, "Only pool can mint");
-        _mint(to, amount);
+        require(account != address(0), "Cannot mint to zero address");
+        _mint(account, amount);
     }
 
-    function burn(address from, uint256 amount) external {
+    function burn(address account, uint256 amount) external {
         require(msg.sender == pool, "Only pool can burn");
-        _burn(from, amount);
+        require(account != address(0), "Cannot burn from zero address");
+        _burn(account, amount);
     }
 }
