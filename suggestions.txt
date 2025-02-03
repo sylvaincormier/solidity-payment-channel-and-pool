@@ -1,0 +1,246 @@
+
+================================================================================
+Scan Results for src/TestTokens.sol
+================================================================================
+
+
+🎨 Style Suggestions:
+----------------------------------------
+Line 9: function mint(address account, uint256 amount) public
+Suggestion: Consider if this function should be external instead of public
+
+Line 18: function mint(address account, uint256 amount) public
+Suggestion: Consider if this function should be external instead of public
+
+
+⛽ Gas Optimization Suggestions:
+----------------------------------------
+Line 10: require(account != address(0), "TestToken: mint to the zero address")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 19: require(account != address(0), "TestToken: mint to the zero address")
+Suggestion: Consider using custom errors instead of require with messages
+
+
+================================================================================
+Scan Results for src/LPToken.sol
+================================================================================
+
+
+⛽ Gas Optimization Suggestions:
+----------------------------------------
+Line 20: require(msg.sender == pool, "Only pool can mint")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 21: require(account != address(0), "Cannot mint to zero address")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 26: require(msg.sender == pool, "Only pool can burn")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 27: require(account != address(0), "Cannot burn from zero address")
+Suggestion: Consider using custom errors instead of require with messages
+
+
+================================================================================
+Scan Results for src/PaymentChannel.sol
+================================================================================
+
+
+⛽ Gas Optimization Suggestions:
+----------------------------------------
+Line 20: require(_payee != address(0), "Invalid payee address")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 21: require(msg.value > 0, "Deposit required")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 22: require(_duration > 0, "Duration must be greater than 0")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 41: require(!isClosed, "Channel is closed")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 42: require(msg.sender == payee, "Only payee can claim")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 43: require(block.timestamp < expiresAt, "Channel has expired")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 44: require(amount <= depositAmount, "Amount exceeds deposit")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 45: require(verify(amount, signature)
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 51: require(success, "Transfer failed")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 56: require(success, "Refund failed")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 61: require(!isClosed, "Channel is closed")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 62: require(msg.sender == payer, "Only payer can refund")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 63: require(block.timestamp >= expiresAt, "Channel hasn't expired")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 67: require(success, "Refund failed")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 71: require(msg.sender == payer, "Only payer can extend")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 72: require(!isClosed, "Channel is closed")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 73: require(newDuration > 0, "Duration must be greater than 0")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 74: require(block.timestamp + newDuration > expiresAt, "New expiration must be later than current")
+Suggestion: Consider using custom errors instead of require with messages
+
+
+================================================================================
+Scan Results for src/LiquidityPool.sol
+================================================================================
+
+
+⛽ Gas Optimization Suggestions:
+----------------------------------------
+Line 41: require(_tokenA != address(0) && _tokenB != address(0), "Zero address")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 42: require(_tokenA != _tokenB, "Same token")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 64: require(newK >= _poolState.lastK, "K value decreased")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 82: require(amountADesired >= MINIMUM_LIQUIDITY, "Insufficient token A amount")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 83: require(amountBDesired >= MINIMUM_LIQUIDITY, "Insufficient token B amount")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 93: require(liquidity > 0, "Insufficient initial liquidity")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 117: require(liquidity > 0, "Insufficient liquidity minted")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 139: require(liquidity > 0, "Invalid liquidity amount")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 140: require(lpToken.balanceOf(msg.sender) >= liquidity, "Insufficient LP token balance")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 143: require(totalSupply > 0, "No supply")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 147: require(amountA > 0 && amountB > 0, "Insufficient liquidity burned")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 175: require(amountIn > 0, "Insufficient input amount")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 176: require(amountIn >= MINIMUM_LIQUIDITY, "Below minimum swap amount")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 181: require(_reserveA > 0 && _reserveB > 0, "Insufficient liquidity")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 189: require(amountOut <= _reserveB / 3, "Output amount too large")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 197: require(amountOut <= _reserveA / 3, "Output amount too large")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 208: require(balanceAfter >= balanceBefore + amountIn, "Balance manipulation detected")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 219: require(amountIn > 0, "Insufficient amount")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 220: require(reserveIn > 0 && reserveOut > 0, "Insufficient liquidity")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 229: require(amountIn > 0, "Insufficient input amount")
+Suggestion: Consider using custom errors instead of require with messages
+
+Line 230: require(reserveIn > 0 && reserveOut > 0, "Insufficient liquidity")
+Suggestion: Consider using custom errors instead of require with messages
+
+
+================================================================================
+Scan Results for test/LiquidityPoolTest.sol
+================================================================================
+
+
+🎨 Style Suggestions:
+----------------------------------------
+Line 20: function setUp() public
+Suggestion: Consider if this function should be external instead of public
+
+Line 57: function testInitialLiquidity() public
+Suggestion: Consider if this function should be external instead of public
+
+Line 70: function testMultipleDeposits() public
+Suggestion: Consider if this function should be external instead of public
+
+Line 84: function testSwap() public
+Suggestion: Consider if this function should be external instead of public
+
+Line 106: function testRemoveLiquidity() public
+Suggestion: Consider if this function should be external instead of public
+
+Line 129: function test_RevertWhen_FlashLoanAttack() public
+Suggestion: Consider if this function should be external instead of public
+
+Line 146: function test_RevertWhen_SwapAmountTooLarge() public
+Suggestion: Consider if this function should be external instead of public
+
+Line 160: function testK_ValueProtection() public
+Suggestion: Consider if this function should be external instead of public
+
+Line 180: function test_RevertWhen_AddingInsufficientLiquidity() public
+Suggestion: Consider if this function should be external instead of public
+
+Line 187: function testAsymmetricLiquidity() public
+Suggestion: Consider if this function should be external instead of public
+
+Line 204: function testMinimumLiquidity() public
+Suggestion: Consider if this function should be external instead of public
+
+Line 210: function test_RevertWhen_RemovingTooMuchLiquidity() public
+Suggestion: Consider if this function should be external instead of public
+
+
+================================================================================
+Scan Results for test/PaymentChannelTest.sol
+================================================================================
+
+
+🎨 Style Suggestions:
+----------------------------------------
+Line 18: function setUp() public
+Suggestion: Consider if this function should be external instead of public
+
+Line 55: function testClaimPayment() public
+Suggestion: Consider if this function should be external instead of public
+
+Line 78: function testRefund() public
+Suggestion: Consider if this function should be external instead of public
+
+Line 94: function testChannelExtension() public
+Suggestion: Consider if this function should be external instead of public
+
+Line 107: function test_RevertWhen_ClaimingAfterExpiration() public
+Suggestion: Consider if this function should be external instead of public
+
+Line 125: function test_RevertWhen_DoubleSpending() public
+Suggestion: Consider if this function should be external instead of public
+

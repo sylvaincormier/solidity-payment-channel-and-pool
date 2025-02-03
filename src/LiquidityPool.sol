@@ -6,6 +6,8 @@ import "openzeppelin-contracts/security/ReentrancyGuard.sol";
 import "openzeppelin-contracts/utils/math/Math.sol";
 import "./LPToken.sol";
 
+/// @title Minimal Liquidity Pool
+/// @notice Implements a basic AMM liquidity pool for two tokens
 contract LiquidityPool is ReentrancyGuard {
     using Math for uint256;
 
@@ -37,6 +39,9 @@ contract LiquidityPool is ReentrancyGuard {
     event LiquidityRemoved(address indexed provider, uint256 amountA, uint256 amountB, uint256 liquidity);
     event Swap(address indexed sender, uint256 amountIn, uint256 amountOut, bool isAtoB);
 
+    /// @notice Constructs a new liquidity pool for two tokens
+    /// @param _tokenA Address of the first token
+    /// @param _tokenB Address of the second token
     constructor(address _tokenA, address _tokenB) {
         require(_tokenA != address(0) && _tokenB != address(0), "Zero address");
         require(_tokenA != _tokenB, "Same token");
@@ -48,16 +53,19 @@ contract LiquidityPool is ReentrancyGuard {
         console2.log("LP Token deployed at:", address(lpToken));
     }
 
-    // View functions
+    /// @notice Gets the current reserves of both tokens
+    /// @return Current reserve of tokenA and tokenB
     function getReserves() public view returns (uint256, uint256) {
         return (_poolState.reserveA, _poolState.reserveB);
     }
 
+    /// @notice Gets the last trade block for a trader
+    /// @param trader Address of the trader
+    /// @return Block number of the trader's last trade
     function getLastTradeBlock(address trader) public view returns (uint256) {
         return _lastTradeBlock[trader];
     }
 
-    // Private functions
     function _updateAndCheckK() private {
         uint256 newK = _poolState.reserveA * _poolState.reserveB;
         if (_poolState.lastK != 0) {
@@ -74,11 +82,18 @@ contract LiquidityPool is ReentrancyGuard {
         _lastTradeBlock[msg.sender] = block.number;
     }
 
+    /// @notice Adds liquidity to the pool
+    /// @param amountADesired Desired amount of tokenA to add
+    /// @param amountBDesired Desired amount of tokenB to add
+    /// @return amountA Actual amount of tokenA added
+    /// @return amountB Actual amount of tokenB added
+    /// @return liquidity Amount of LP tokens minted
     function addLiquidity(uint256 amountADesired, uint256 amountBDesired) 
         external 
         nonReentrant 
         returns (uint256 amountA, uint256 amountB, uint256 liquidity) 
     {
+        require(msg.sender != address(0), "Zero address not allowed");
         require(amountADesired >= MINIMUM_LIQUIDITY, "Insufficient token A amount");
         require(amountBDesired >= MINIMUM_LIQUIDITY, "Insufficient token B amount");
 
@@ -131,11 +146,16 @@ contract LiquidityPool is ReentrancyGuard {
         emit LiquidityAdded(msg.sender, amountA, amountB, liquidity);
     }
 
+    /// @notice Removes liquidity from the pool
+    /// @param liquidity Amount of LP tokens to burn
+    /// @return amountA Amount of tokenA returned
+    /// @return amountB Amount of tokenB returned
     function removeLiquidity(uint256 liquidity) 
         external 
         nonReentrant 
         returns (uint256 amountA, uint256 amountB) 
     {
+        require(msg.sender != address(0), "Zero address not allowed");
         require(liquidity > 0, "Invalid liquidity amount");
         require(lpToken.balanceOf(msg.sender) >= liquidity, "Insufficient LP token balance");
 
@@ -151,7 +171,8 @@ contract LiquidityPool is ReentrancyGuard {
         
         uint256 oldK = _poolState.reserveA * _poolState.reserveB;
         uint256 newK = newReserveA * newReserveB;
-        uint256 ratio = ((totalSupply - liquidity) * 1e18) / totalSupply;
+        uint256 totalMinusLiquidity = totalSupply - liquidity;
+        uint256 ratio = (totalMinusLiquidity * 1e18) / totalSupply;
         require(
             (newK * 1e18) >= (oldK * ratio * ratio / 1e18), 
             "K value check failed"
@@ -167,13 +188,17 @@ contract LiquidityPool is ReentrancyGuard {
         emit LiquidityRemoved(msg.sender, amountA, amountB, liquidity);
     }
 
+    /// @notice Swaps tokens
+    /// @param amountIn Amount of input token
+    /// @param isAtoB True if swapping A for B, false if swapping B for A
+    /// @return amountOut Amount of output token
     function swap(uint256 amountIn, bool isAtoB) 
         external 
         nonReentrant 
         returns (uint256 amountOut) 
     {
-        require(amountIn > 0, "Insufficient input amount");
-        require(amountIn >= MINIMUM_LIQUIDITY, "Below minimum swap amount");
+        require(msg.sender != address(0), "Zero address not allowed");
+        require(amountIn >= MINIMUM_LIQUIDITY, "Insufficient input amount");
         
         _checkTradeDelay();
         
@@ -211,6 +236,11 @@ contract LiquidityPool is ReentrancyGuard {
         emit Swap(msg.sender, amountIn, amountOut, isAtoB);
     }
 
+    /// @notice Quotes the amount of output tokens for a given input
+    /// @param amountIn Amount of input tokens
+    /// @param reserveIn Reserve of input token
+    /// @param reserveOut Reserve of output token
+    /// @return amountOut Amount of output tokens
     function quote(uint256 amountIn, uint256 reserveIn, uint256 reserveOut) 
         public 
         pure 
@@ -221,17 +251,22 @@ contract LiquidityPool is ReentrancyGuard {
         amountOut = (amountIn * reserveOut) / reserveIn;
     }
 
+    /// @notice Calculates output amount including fees
+    /// @param amountIn Amount of input tokens
+    /// @param reserveIn Reserve of input token
+    /// @param reserveOut Reserve of output token
+    /// @return amountOut Amount of output tokens
     function getAmountOut(uint256 amountIn, uint256 reserveIn, uint256 reserveOut) 
         public 
-        view 
+        pure 
         returns (uint256 amountOut) 
     {
         require(amountIn > 0, "Insufficient input amount");
         require(reserveIn > 0 && reserveOut > 0, "Insufficient liquidity");
 
-        uint256 amountInWithFee = amountIn * (FEE_DENOMINATOR - FEE_NUMERATOR);
+        uint256 amountInWithFee = amountIn * 997; // FEE_DENOMINATOR - FEE_NUMERATOR = 997
         uint256 numerator = amountInWithFee * reserveOut;
-        uint256 denominator = (reserveIn * FEE_DENOMINATOR) + amountInWithFee;
+        uint256 denominator = (reserveIn * 1000) + amountInWithFee;
         amountOut = numerator / denominator;
     }
 }
