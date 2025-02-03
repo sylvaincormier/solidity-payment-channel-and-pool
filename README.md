@@ -1,63 +1,50 @@
 # Payment Channel & Liquidity Pool Smart Contracts
 
-This project implements two smart contracts:
-1. A Unidirectional Payment Channel for off-chain Ether transfers
-2. A Minimal Liquidity Pool AMM (Automated Market Maker)
+Implementation of a Unidirectional Payment Channel and Minimal Liquidity Pool AMM.
 
-## 🛠 Technology Stack
-
+## Technology Stack
 - Solidity ^0.8.20
-- Foundry (for testing and development)
-- OpenZeppelin Contracts (for standard implementations and security)
+- Foundry
+- OpenZeppelin Contracts
 
-## 📋 Prerequisites
-
-- [Foundry](https://book.getfoundry.sh/getting-started/installation)
-- Git
-
-## 🚀 Quick Start
-
+## Installation
 ```bash
-# Clone the repository
 git clone <repository-url>
 cd solidity-payment-channel-and-pool
 
-# Install dependencies
-forge install
+# Dependencies
+forge install OpenZeppelin/openzeppelin-contracts@v4.9.0 --no-commit
+forge install foundry-rs/forge-std
 
-# Build the project
+# Remappings
+echo 'openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/' > remappings.txt
+
+# Build & Test
 forge build
-
-# Run tests
-forge test
-
-# Run tests with verbosity (to see logs)
 forge test -vv
-
-# Run specific test
-forge test --match-test testChannelDeployment -vv
 ```
 
-## 💡 No Test Network Required
+## Project Structure
+```
+src/
+├─ LiquidityPool.sol    # AMM implementation
+├─ PaymentChannel.sol   # Payment channel implementation
+├─ LPToken.sol         # Liquidity token
+├─ TestTokens.sol      # Test ERC20 tokens
+test/
+├─ LiquidityPoolTest.sol
+└─ PaymentChannelTest.sol
+```
 
-This project uses Foundry's built-in EVM for testing. You don't need to run or connect to a testnet. Foundry provides:
-- Local blockchain simulation
-- Account management (test addresses)
-- Transaction management
-- Block manipulation
-
-## 📝 Contract Details
+## Core Features
 
 ### Payment Channel
-Located in `src/PaymentChannel.sol`
-
-Features:
 - Off-chain signature-based payments
-- Channel extension mechanism
+- Channel extension
 - Timeout-based refunds
 - Double-spend prevention
 
-Key Functions:
+Functions:
 ```solidity
 constructor(address _receiver, uint256 _expiration) payable
 function extend(uint256 newExpiration) external
@@ -66,104 +53,45 @@ function refund() external
 ```
 
 ### Liquidity Pool
-Located in `src/LiquidityPool.sol`
-
-Features:
 - Constant product AMM (x * y = k)
 - LP token rewards
 - Flash loan protection
 - 0.3% swap fee
 
-Key Functions:
+Functions:
 ```solidity
 function addLiquidity(uint256 amountADesired, uint256 amountBDesired) external
 function removeLiquidity(uint256 liquidity) external
 function swap(uint256 amountIn, bool isAtoB) external
 ```
 
-## 🧪 Testing
-
-Tests are organized in two files:
-- `test/PaymentChannelTest.sol`
-- `test/LiquidityPoolTest.sol`
-
-Run specific test suites:
+## Testing
 ```bash
-# Payment Channel tests
-forge test --match-path test/PaymentChannelTest.sol -vv
+# All tests
+forge test -vv
 
-# Liquidity Pool tests
+# Specific suites
+forge test --match-path test/PaymentChannelTest.sol -vv
 forge test --match-path test/LiquidityPoolTest.sol -vv
 ```
 
-### Test Coverage
+### Coverage
 - Payment Channel: 7 tests
-  - Basic functionality
-  - Channel extension
-  - Payment claiming
-  - Refund mechanism
-  - Security checks
-
 - Liquidity Pool: 11 tests
-  - Liquidity provisioning
-  - Token swaps
-  - Flash loan prevention
-  - K-value protection
-  - Fee mechanisms
 
-## 🔒 Security Features
-
-### Payment Channel
-- Signature verification using ecrecover
-- Timeout mechanism
-- Single-use claiming
-- Proper access control
-
-### Liquidity Pool
-- ReentrancyGuard implementation
-- Flash loan prevention
-- K-value preservation
-- Maximum swap limits
-- Minimum liquidity requirements
-
-## ⛽ Gas Optimization
-
-Key metrics:
+## Gas Metrics
 ```
 Payment Channel:
-- Deployment: ~27k gas
-- Channel Extension: ~23k gas
-- Payment Claim: ~104k gas
-- Refund: ~58k gas
+- Deployment: ~27k
+- Extension: ~23k
+- Claim: ~104k
+- Refund: ~58k
 
 Liquidity Pool:
-- Initial Liquidity: ~240k gas
-- Swap: ~298k gas
-- Remove Liquidity: ~264k gas
+- Initial Liquidity: ~221k
+- Swap: ~299k
+- Remove Liquidity: ~265k
 ```
 
-## 📈 Performance Considerations
-
-The contracts are optimized for:
-- Minimal storage operations
-- Efficient math calculations
-- Gas-efficient function ordering
-- Memory vs. storage trade-offs
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to your branch
-5. Create a Pull Request
-
-## 📄 License
-
-MIT License
-
-## ✨ Acknowledgments
-
-- OpenZeppelin for secure contract implementations
-- Foundry for development framework
-- Uniswap V2 for AMM inspiration
+## License
+MIT
