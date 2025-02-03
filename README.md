@@ -1,66 +1,19 @@
-## Foundry
+Payment Channel & Liquidity Pool Smart Contracts
+This project implements two smart contracts:
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+A Unidirectional Payment Channel for off-chain Ether transfers
+A Minimal Liquidity Pool AMM (Automated Market Maker)
 
-Foundry consists of:
+🛠 Technology Stack
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+Solidity ^0.8.20
+Foundry (for testing and development)
+OpenZeppelin Contracts (for standard implementations and security)
 
-## Documentation
+📋 Prerequisites
 
-https://book.getfoundry.sh/
+Foundry
+Git
 
-## Usage
-
-### Build
-
-```shell
-$ forge build
-```
-
-### Test
-
-```shell
-$ forge test
-```
-
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+🚀 Quick Start
+bash
