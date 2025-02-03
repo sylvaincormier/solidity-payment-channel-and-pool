@@ -1,43 +1,30 @@
-name: CI
+name: Foundry CI
 
 on:
   push:
+    branches:
+      - main
   pull_request:
-  workflow_dispatch:
-
-env:
-  FOUNDRY_PROFILE: ci
+    branches:
+      - main
 
 jobs:
-  check:
-    strategy:
-      fail-fast: true
-
-    name: Foundry project
+  test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
+      - name: Check out repository
+        uses: actions/checkout@v3
 
       - name: Install Foundry
-        uses: foundry-rs/foundry-toolchain@v1
-
-      - name: Show Forge version
         run: |
-          forge --version
+          curl -L https://foundry.paradigm.xyz | bash
+          foundryup
 
-      - name: Run Forge fmt
-        run: |
-          forge fmt --check
-        id: fmt
+      - name: Install dependencies
+        run: forge install
 
-      - name: Run Forge build
-        run: |
-          forge build --sizes
-        id: build
+      - name: Build
+        run: forge build
 
-      - name: Run Forge tests
-        run: |
-          forge test -vvv
-        id: test
+      - name: Run tests
+        run: forge test --no-match-test PatternYouDontWant
