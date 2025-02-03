@@ -207,13 +207,20 @@ contract LiquidityPoolTest is Test {
         assertGt(lpTokens, pool.MINIMUM_LIQUIDITY(), "LP tokens should be greater than minimum liquidity");
     }
 
-    function test_RevertWhen_RemovingTooMuchLiquidity() public {
-        vm.startPrank(alice);
-        (,, uint256 lpTokens) = pool.addLiquidity(INITIAL_LIQUIDITY, INITIAL_LIQUIDITY);
-        
-        
-        vm.expectRevert("ERC20: burn amount exceeds balance"); 
-        pool.removeLiquidity(lpTokens + 1); // Try to remove more than available
-        vm.stopPrank();
-    }
+   function test_RevertWhen_RemovingTooMuchLiquidity() public {
+    vm.startPrank(alice);
+    
+    // Add initial liquidity
+    (,, uint256 lpTokens) = pool.addLiquidity(INITIAL_LIQUIDITY, INITIAL_LIQUIDITY);
+    
+    // Wait required blocks
+    vm.roll(block.number + 3);
+    
+    // Try to remove more than available
+    uint256 tooMuchLiquidity = lpTokens + 1;
+    vm.expectRevert("Insufficient LP token balance");
+    pool.removeLiquidity(tooMuchLiquidity);
+    
+    vm.stopPrank();
+}
 }
