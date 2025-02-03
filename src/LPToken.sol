@@ -16,7 +16,7 @@ contract LPToken is ERC20 {
         console2.log("LP Token mint called by:", msg.sender);
         console2.log("Minting to address:", account);
         console2.log("Amount:", amount);
-        
+
         require(msg.sender == pool, "Only pool can mint");
         require(account != address(0), "Cannot mint to zero address");
         _mint(account, amount);

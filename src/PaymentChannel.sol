@@ -13,10 +13,7 @@ contract PaymentChannel is ReentrancyGuard {
     uint256 public depositAmount;
     bool public isClosed;
 
-    constructor(
-        address _payee,
-        uint256 _duration
-    ) payable {
+    constructor(address _payee, uint256 _duration) payable {
         require(_payee != address(0), "Invalid payee address");
         require(msg.value > 0, "Deposit required");
         require(_duration > 0, "Duration must be greater than 0");
@@ -45,14 +42,14 @@ contract PaymentChannel is ReentrancyGuard {
         require(verify(amount, signature), "Invalid signature");
 
         isClosed = true;
-        
+
         // Transfer amount to payee
-        (bool success, ) = payee.call{value: amount}("");
+        (bool success,) = payee.call{value: amount}("");
         require(success, "Transfer failed");
 
         // Return remaining funds to payer
         if (amount < depositAmount) {
-            (success, ) = payer.call{value: depositAmount - amount}("");
+            (success,) = payer.call{value: depositAmount - amount}("");
             require(success, "Refund failed");
         }
     }
@@ -63,7 +60,7 @@ contract PaymentChannel is ReentrancyGuard {
         require(block.timestamp >= expiresAt, "Channel hasn't expired");
 
         isClosed = true;
-        (bool success, ) = payer.call{value: depositAmount}("");
+        (bool success,) = payer.call{value: depositAmount}("");
         require(success, "Refund failed");
     }
 

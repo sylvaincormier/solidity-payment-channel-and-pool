@@ -7,7 +7,7 @@ import "openzeppelin-contracts/utils/cryptography/ECDSA.sol";
 
 contract PaymentChannelTest is Test {
     using ECDSA for bytes32;
-    
+
     PaymentChannel public channel;
     address public payer;
     uint256 public payerPrivateKey;
@@ -41,7 +41,7 @@ contract PaymentChannelTest is Test {
 
     function testSignatureVerification() public view {
         uint256 amount = 0.5 ether;
-        
+
         // Create signature as payer
         bytes32 messageHash = channel.getHash(amount);
         bytes32 ethSignedMessageHash = ECDSA.toEthSignedMessageHash(messageHash);
@@ -54,7 +54,7 @@ contract PaymentChannelTest is Test {
 
     function testClaimPayment() public {
         uint256 amount = 0.5 ether;
-        
+
         // Create signature as payer
         bytes32 messageHash = channel.getHash(amount);
         bytes32 ethSignedMessageHash = ECDSA.toEthSignedMessageHash(messageHash);
@@ -106,7 +106,7 @@ contract PaymentChannelTest is Test {
 
     function test_RevertWhen_ClaimingAfterExpiration() public {
         uint256 amount = 0.5 ether;
-        
+
         // Create signature as payer
         bytes32 messageHash = channel.getHash(amount);
         bytes32 ethSignedMessageHash = ECDSA.toEthSignedMessageHash(messageHash);
@@ -124,7 +124,7 @@ contract PaymentChannelTest is Test {
 
     function test_RevertWhen_DoubleSpending() public {
         uint256 amount = 0.5 ether;
-        
+
         // Create signature as payer
         bytes32 messageHash = channel.getHash(amount);
         bytes32 ethSignedMessageHash = ECDSA.toEthSignedMessageHash(messageHash);
